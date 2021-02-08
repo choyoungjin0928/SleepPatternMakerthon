@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+        <EditText
+            android:id="@+id/etJoinName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="onJoinEditTextClick"
+            android:hint="이름" />
+        <TextView
+            android:id="@+id/tvJoinName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinName"
+            app:layout_constraintRight_toRightOf="@id/etJoinName"
+            android:textColor="#ff0000"
+            android:text="" />
+        <EditText
+            android:id="@+id/etJoinId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinName"
+            android:onClick="onJoinEditTextClick"
+            android:hint="아이디" />
+        <TextView
+            android:id="@+id/tvJoinId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinId"
+            app:layout_constraintRight_toRightOf="@id/etJoinId"
+            android:textColor="#ff0000"
+            android:text="" />
+        <EditText
+            android:id="@+id/etJoinPw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinId"
+            android:onClick="onJoinEditTextClick"
+            android:layout_marginTop="8dp"
+            android:inputType="textPassword"
+            android:hint="비밀번호" />
+        <TextView
+            android:id="@+id/tvJoinPw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinPw"
+            app:layout_constraintRight_toRightOf="@id/etJoinPw"
+            android:textColor="#ff0000"
+            android:text="" />
+        <EditText
+            android:id="@+id/etJoinPwcf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinPw"
+            android:onClick="onJoinEditTextClick"
+            android:layout_marginTop="8dp"
+            android:inputType="textPassword"
+            android:hint="비밀번호 확인" />
+        <TextView
+            android:id="@+id/tvJoinPwcf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinPwcf"
+            app:layout_constraintRight_toRightOf="@id/etJoinPwcf"
+            android:textColor="#ff0000"
+            android:text="" />
+        <EditText
+            android:id="@+id/etJoinTel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinPwcf"
+            android:onClick="onJoinEditTextClick"
+            android:layout_marginTop="8dp"
+            android:inputType="phone"
+            android:hint="연락처(선택)" />
+        <Button
+            android:id="@+id/btnJoinOK"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etJoinTel"
+            android:layout_marginTop="16dp"
+            android:text="가입하기" />
+        <Button
+            android:id="@+id/btnJoinBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/btnJoinOK"
+            android:layout_marginTop="8dp"
+            android:text="돌아가기" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
