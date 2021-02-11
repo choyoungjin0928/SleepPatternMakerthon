@@ -22,7 +22,7 @@
         crossorigin="anonymous"></script>
     <!-- 쿠키 사용을 위한 Jquery-cookie 임포트 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}?ver=17">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}?ver=18">
     <script>
         // 로딩 후 바로 실행
 
@@ -86,28 +86,25 @@
                     if (response['result'] == 'success') {
                         let orders = response['all_orders']
 
-                        for (let i = 0; i < orders.length; i++) {
+                        let name = orders[5]['name']
+                        let age = orders[5]['age']
+                        let phone = orders[5]['phone']
+                        let image = orders[5]['image']
+                        make_card(image, name, age, phone)
 
-                            let name = orders[i]['name']
-                            let age = orders[i]['age']
-                            let phone = orders[i]['phone']
-                            let image = orders[i]['image']
-                            make_card(i, image, name, age, phone)
-                        }
                     }
                 }
             })
         }
 
-        function make_card(i, image, name, age, phone) {
-            let temp_html = `<div class="card">
+        function make_card(image, name, age, phone) {
+            let temp_html = `<div class="card" style="margin-left: 300px; width: 500px;">
                                 <img class="card-img-top" src="${image}"
                                     alt="Card image cap">
                                 <div class="card-body">
                                     <h2 style="color:black;">${name}</h2>
                                     <p style="color:black;">${age}세</p>
                                     <p style="color:black;">${phone}</p>
-                                    <a class="btn btn-secondary" id="cardbtn" onclick="popup('${name}')" role="button">솔루션</a>
                                     <a class="btn btn-secondary" id="cardbtn" href="/result?name=${name}" target="_blank" role="button">그래프</a>
                                 </div>
                             </div>`;

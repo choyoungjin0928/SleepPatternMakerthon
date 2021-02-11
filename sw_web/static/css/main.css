@@ -117,10 +117,7 @@ body {
 
 /*clientimage*/
 
-.wrap {
-    width: 1000px;
-    margin: 60px auto;
-}
+
 
 
 /*IMAGES*/
@@ -153,6 +150,10 @@ body {
 #counselor3 {
     width: 450px;
     height: 450px;
+}
+
+#table{
+    color:white
 }
 
 /*chart*/

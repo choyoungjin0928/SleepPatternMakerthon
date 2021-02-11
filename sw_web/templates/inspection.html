@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Static Template</title>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}?ver=5">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}?ver=8">
   <script>
     let score = new Array();
     let com = new Array();
@@ -49,6 +49,10 @@
                 let orders = response['all_orders']
                 for (let i = 0; i < orders.length; i++) {
                   let solution = orders[i]['solution']
+                  let temp_html = `<tr>
+                                        <td>${solution}</th>
+                                    </tr>`
+                  $('#order-box').append(temp_html)
                   soll[i] = solution
                 }
               }
@@ -73,6 +77,16 @@
       })
     }
   </script>
+  <style>
+    #btn {
+      color: black
+    }
+
+    .table {
+      border-collapse: collapse;
+      text-align: left;
+    }
+  </style>
 </head>
 
 <body>
@@ -190,11 +204,22 @@
           <input type="radio" name="q12" value=3>매우 나쁨
         </h5>
       </div>
-      <button onclick="calculation(); listing(); give();">제출하기</button>
+      <button id="btn" onclick="calculation(); listing(); give();">제출하기</button>
     </div>
     <div>
       <h3>0 : 매우좋음 1 : 좋음 2 : 나쁨 3 : 매우나쁨</h3>
       <div id="result"></div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">
+              <h1>솔루션 : </h1>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="order-box">
+        </tbody>
+      </table>
     </div>
   </div>
 </body>

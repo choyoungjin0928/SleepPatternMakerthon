@@ -8,13 +8,20 @@ import os
 import sys
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for, make_response
 from pymongo import MongoClient
-client = MongoClient('mongodb://agapao1:1998@15.164.163.148/', 27017)
-db = client.aunae
+clients = MongoClient('mongodb://agapao1:1998@52.78.67.43', 27017)
+Mongodb = clients.aunae
+Mongodb1 = clients.solution
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate('swmaker-84884-firebase-adminsdk-mhhgb-e61c6d6d0e.json')
+firebase_admin.initialize_app(cred)
+Firedb = firestore.client()
 
 
 app = Flask(__name__)
-api = Api(app)
-
 
 # JWT 토큰을 만들 때 필요한 비밀문자열입니다. 아무거나 입력해도 괜찮습니다.
 # 이 문자열은 서버만 알고있기 때문에, 내 서버에서만 토큰을 인코딩(=만들기)/디코딩(=풀기) 할 수 있습니다.
@@ -30,7 +37,6 @@ SECRET_KEY = 'apple'
 #################################
 ##  HTML을 주는 부분             ##
 #################################
-
 
 @app.route('/')
 def home():
@@ -86,8 +92,11 @@ def popup():
 
 @app.route('/cusadd')
 def cusadd():
-    print('hi')
     return render_template('cusadd.html')
+
+@app.route('/inspection')
+def inspection():
+    return render_template('inspection.html')
 
 
 #################################
@@ -105,7 +114,7 @@ def api_register():
 
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
 
-    db.user.insert_one(
+    Mongodb.user.insert_one(
         {'id': id_receive, 'pw': pw_hash, 'nick': nickname_receive})
 
     return jsonify({'result': 'success'})
@@ -123,7 +132,7 @@ def api_login():
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
 
     # id, 암호화된pw을 가지고 해당 유저를 찾습니다.
-    result = db.user.find_one({'id': id_receive, 'pw': pw_hash})
+    result = Mongodb.user.find_one({'id': id_receive, 'pw': pw_hash})
 
     # 찾으면 JWT 토큰을 만들어 발급합니다.
     if result is not None:
@@ -136,7 +145,7 @@ def api_login():
             'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=1800)
         }
         token = jwt.encode(payload, SECRET_KEY,
-                           algorithm='HS256').decode('utf-8')
+                           algorithm='HS256')
 
         # token을 줍니다.
         return jsonify({'result': 'success', 'token': token})
@@ -167,7 +176,7 @@ def api_valid():
 
         # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
         # 여기에선 그 예로 닉네임을 보내주겠습니다.
-        userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
+        userinfo = Mongodb.user.find_one({'id': payload['id']}, {'_id': 0})
         return jsonify({'result': 'success', 'nickname': userinfo['nick']})
     except jwt.ExpiredSignatureError:
         # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
@@ -177,14 +186,20 @@ def api_valid():
 @app.route('/show', methods=['GET'])
 def show():
     name = request.args.get('name')
-    orders = list(db.solution.find({}, {'_id': 0}))
+    orders = list(Mongodb.solution.find({}, {'_id': 0}))
     return jsonify({'result': 'success', 'all_orders': orders})
 
+@app.route('/getsol', methods=['GET'])
+def getsol():
+    num = request.args.get('num')
+    want = Mongodb1.solution.find({'component':num}, {'_id': 0})
+    orders = list(want)
+    return jsonify({'result': 'success', 'all_orders': orders})
 
 @app.route('/showsolution', methods=['GET'])
 def showsolution():
     name = request.args.get('name')
-    want_item = db.solution.find_one({'name': name}, {'_id': 0})
+    want_item = Mongodb.solution.find_one({'name': name}, {'_id': 0})
     order = list(want_item['solution'])
     return jsonify({'result': 'success', 'all_orders': order})
 
@@ -192,7 +207,7 @@ def showsolution():
 @app.route('/showscore', methods=['GET'])
 def showscore():
     name = request.args.get('name')
-    want_item = db.solution.find_one({'name': name}, {'_id': 0})
+    want_item = Mongodb.solution.find_one({'name': name}, {'_id': 0})
     score1 = list(want_item['score1'])
     score2 = list(want_item['score2'])
     score3 = list(want_item['score3'])
@@ -201,21 +216,28 @@ def showscore():
     return jsonify({'result': 'success', 'score1': score1, 'score2': score2, 'score3': score3, 'score4': score4, 'score5': score5})
 
 
-@app.route('/show2', methods=['GET'])
-def show2():
-    name = request.args.get('name')
-    want_date = db.solution.find_one({'name': name}, {'_id': 0})
-    order = list(want_date['year'])
-    return jsonify({'result': 'success', 'all_orders': order})
-
-
 @app.route('/savedb', methods=['POST'])
 def savedb():
     data = request.get_json()
     name_receive = data['name_give']
     sol_receive = data['arr']
-    db.solution.update_one({'name': name_receive}, {
+    Mongodb.solution.update_one({'name': name_receive}, {
                            '$set': {'solution': sol_receive}})
+    return jsonify({'result': 'success'})
+
+
+@app.route('/give', methods=['POST'])
+def give():
+    data = request.get_json()
+    arr_receive = data['soll']
+    doc_ref = Firedb.collection(u'solution_list').document(u'user01')
+    doc_ref.set({
+        u'{i}' : {
+            u'check' : False,
+            u'solution' : arr_receive,
+            u'title' : ""
+        }
+    })
     return jsonify({'result': 'success'})
 
 
@@ -228,15 +250,15 @@ def savescore():
     score3 = data['number3']
     score4 = data['number4']
     score5 = data['number5']
-    db.solution.update({'name': name_receive}, {
+    Mongodb.solution.update({'name': name_receive}, {
         '$push': {'score1': score1}})
-    db.solution.update({'name': name_receive}, {
+    Mongodb.solution.update({'name': name_receive}, {
         '$push': {'score2': score2}})
-    db.solution.update({'name': name_receive}, {
+    Mongodb.solution.update({'name': name_receive}, {
         '$push': {'score3': score3}})
-    db.solution.update({'name': name_receive}, {
+    Mongodb.solution.update({'name': name_receive}, {
         '$push': {'score4': score4}})
-    db.solution.update({'name': name_receive}, {
+    Mongodb.solution.update({'name': name_receive}, {
         '$push': {'score5': score5}})
     return jsonify({'result': 'success'})
 
@@ -260,7 +282,7 @@ def addcustomer():
         'image': image_receive
     }
 
-    db.solution.insert_one(doc)
+    Mongodb.solution.insert_one(doc)
 
     return jsonify({'result': 'success', 'msg': '저장이 완료되었습니다'})
 
