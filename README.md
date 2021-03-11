@@ -4,4 +4,5 @@
 파이썬 Flask와 HTML, Javascript, Jquery, Mongo DB등을 이용하여 제작한 
 수면개선 웹페이지 입니다.
 
+비용문제로 인해 AWS 서버는 닫은 상태입니다.
 
